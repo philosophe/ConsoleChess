@@ -17,8 +17,6 @@ public class Piece {
 	private String color;
 	private Square move;
 	private boolean hasMoved=false;
-	private HashMap<Integer, List<Integer>> rows;
-	private HashMap<Integer, List<Integer>> columns;
 	private Board board;
 	private Set<Square> validMoves;
 	
@@ -26,7 +24,6 @@ public class Piece {
 		this.position = position;
 		this.type = type;
 		this.color = color;
-		initPosMap();
 	}
 
 	public List checkBoard(Square move, Board board) throws Exception {
@@ -113,21 +110,6 @@ public class Piece {
 		if (!attack) validMoves = reduceToCheckMoves(validMoves);
 		
 		return validMoves;
-	}
-	
-	private void initPosMap() {
-		rows = new HashMap<Integer, List<Integer>>();
-		columns = new HashMap<Integer, List<Integer>>();
-		for (int i=1; i<=8; i++) {
-			List<Integer> rowNums = new ArrayList<Integer>();
-			List<Integer> columnNums = new ArrayList<Integer>();
-			for (int j=7; j>=0; j--) {
-				rowNums.add(8*i-j);
-				columnNums.add(i + 8*j);
-			}
-			rows.put(i, rowNums);
-			columns.put(i, columnNums);
-		}
 	}
 	
 	private boolean isCheck(String oppColor) {
