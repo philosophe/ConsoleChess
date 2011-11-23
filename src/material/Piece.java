@@ -19,6 +19,7 @@ public class Piece {
 	private boolean hasMoved=false;
 	private Board board;
 	private Set<Square> validMoves;
+	private Map<String, Square> castlingMoves;
 	
 	Piece(Square position, String type, String color) {
 		this.position = position;
@@ -112,6 +113,10 @@ public class Piece {
 		return validMoves;
 	}
 	
+	public boolean hasMoved() {
+		return hasMoved;
+	}
+	
 	private boolean isCheck(String oppColor) {
 		try {
 			for (Square sq : board.getAttackedSquares(oppColor)) {
@@ -183,11 +188,12 @@ public class Piece {
 	}
 	
 	private void reduceToCheckMoves() {
-		for (Square m : new HashSet<Square>(validMoves)) {
-			if (violatesCheck(m)) {
-				validMoves.remove(m);
-			}
-		}
+		validMoves = reduceToCheckMoves(validMoves);
+//		for (Square m : new HashSet<Square>(validMoves)) {
+//			if (violatesCheck(m)) {
+//				validMoves.remove(m);
+//			}
+//		}
 	}
 	
 	private Set<Square> reduceToCheckMoves(Set<Square> validMoves) {
@@ -195,6 +201,15 @@ public class Piece {
 		for (Square m : validMoves) {
 			if (!violatesCheck(m))	checkMoves.add(m);
 		}
+		
+		try {
+			int row = (color.equals("white")) ? 1 : 8;
+			if (type.equals("king")) {
+				if (!violatesCheck(castlingMoves.get("king1-4")) && !violatesCheck(castlingMoves.get("king1-3"))) {
+					checkMoves.add(new Square(3,row));
+				}
+			}
+		} catch (NullPointerException e){}
 		return checkMoves;
 	}
 	
@@ -242,6 +257,7 @@ public class Piece {
 				if (!horMove.equals(position) && !bc.blocked(position, horMove)) validMoves.add(horMove);
 				if (!vertMove.equals(position) && !bc.blocked(position, vertMove)) validMoves.add(vertMove);
 			}
+//			validMoves.addAll(validCastlingMoves(bc));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -320,10 +336,47 @@ public class Piece {
 					if (onBoard(sq) && !bc.blocked(position, sq) && !board.getAttackedSquares(color).contains(sq)) validMoves.add(sq);
 				}
 			}
+//			validMoves.addAll(validCastlingMoves(bc));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return validMoves;
+	}
+	
+	private void setCastlingMoves(BlockCheck bc) {
+		castlingMoves = new HashMap<String, Square>();
+		int row = (color.equals("white")) ? 1 : 8;
+		int[] cols = {1,5,8};
+		Piece king = board.getSquare(new Square(cols[1], row));
+		Piece rook1 = board.getSquare(new Square(cols[0], row));
+		Piece rook8 = board.getSquare(new Square(cols[2], row));
+		
+		try {
+			if (king != null) {
+				if (!king.hasMoved() && !isCheck(color)) {
+					if (rook1 != null) {
+						if (!rook1.hasMoved()) {
+							if (!bc.blocked(king.getPosition(), rook1.getPosition())) {
+								castlingMoves.put("king1-3", new Square(3,row));
+								castlingMoves.put("king1-4", new Square(4,row));
+								castlingMoves.put("rook1", new Square(4, row));
+							}
+						}
+					}
+					if (rook8 != null) {
+						if (!rook8.hasMoved() && this == rook8) {
+							if (!bc.blocked(king.getPosition(), rook8.getPosition())) {
+								castlingMoves.put("king8-7", new Square(7, row));
+								castlingMoves.put("king8-6", new Square(6,row));
+								castlingMoves.put("rook8", new Square(6,row));
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private Set<Square> validPawnMoves(BlockCheck bc) {
@@ -365,13 +418,18 @@ public class Piece {
 	}
 	
 	private boolean violatesCheck(Square move) {
+		return violatesCheck(this, move);
+	}
+	
+	private boolean violatesCheck(Piece p, Square move) {
 		try {
-			board.movePiece(this, move);
+			board.movePiece(p, move);
 			if (isCheck(color)) {
-				board.movePieceBack(this, move);
+				board.movePieceBack(p, move);
 				return true;
 			}
-			board.movePieceBack(this, move);
+			board.movePieceBack(p, move);
+		} catch (NullPointerException e) {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
