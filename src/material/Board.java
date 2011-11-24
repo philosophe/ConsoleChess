@@ -1,14 +1,7 @@
 package material;
 
-import material.Piece;
-import material.Square;
-import material.Piece.BlockCheck;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,7 +40,7 @@ public class Board implements Cloneable {
 	}
 	
 	public Set<Piece> getPieces(String color) {
-		Set pieces = new HashSet<Piece>();
+		Set<Piece> pieces = new HashSet<Piece>();
 		for (Piece p : setup.values()) {
 			if (p != null) {
 				if (p.getColor().equals(color)) pieces.add(p);
