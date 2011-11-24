@@ -191,6 +191,8 @@ public class Main {
 					printValidMoves(move);
 				} else if (move.contains("attacked")) {
 					printAttackedSquares();
+				} else if (move.contains("show")) {
+					printBoard();
 				} else {
 					parseMove(move);
 					printBoard();
