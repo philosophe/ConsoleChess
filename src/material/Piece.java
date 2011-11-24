@@ -1,10 +1,6 @@
 package material;
 
-import material.Board;
-import material.Square;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +23,7 @@ public class Piece {
 		this.color = color;
 	}
 
-	public List checkBoard(Square move, Board board) throws Exception {
+	public List<Boolean> checkBoard(Square move, Board board) throws Exception {
 		this.move = move;
 		this.board = board;
 		
@@ -94,7 +90,7 @@ public class Piece {
 	public Set<Square> getValidMoves(Board board, boolean attack) {
 		this.board = board;
 		BlockCheck bc = new BlockCheck(attack);
-		Set validMoves = new HashSet<Square>();
+		Set<Square> validMoves = new HashSet<Square>();
 		if (type.equals("rook")) {
 			validMoves = validRookMoves(bc);
 		} else if (type.equals("knight")) {
