@@ -146,20 +146,24 @@ public class Main {
 	}
 	
 	private static void printValidMoves(String command) throws Exception {
-		String sq = command.split(" ")[1];
-		if (checkMoveString(sq)) {
-			Square square = algebraicToPos(sq.toLowerCase().substring(0,1), Integer.parseInt(sq.substring(1)));
-			Piece p;
-			if ((p = board.getSquare(square)) != null) {
-				for (Square s : p.getValidMoves(board, false)) {
-					System.out.println(s);
-				}
-			} else {
-				System.out.println("No piece on square.");
-			}
-		} else {
-			System.out.println("Please enter a valid square.");
-		}
+        try {
+            String sq = command.split(" ")[1];
+            if (checkMoveString(sq)) {
+                Square square = algebraicToPos(sq.toLowerCase().substring(0,1), Integer.parseInt(sq.substring(1)));
+                Piece p;
+                if ((p = board.getSquare(square)) != null) {
+                    for (Square s : p.getValidMoves(board, false)) {
+                        System.out.println(s);
+                    }
+                } else {
+                    System.out.println("No piece on square.");
+                }
+            } else {
+                System.out.println("Please enter a valid square.");
+            }
+        } catch( Exception e ) {
+            System.out.println("Please enter a valid square.");
+        }
 	}
 	
 	private static void updateTurn () {
