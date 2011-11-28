@@ -8,6 +8,8 @@ To use:
 	Pieces on the board are denoted by a smaller case character to denote color ("w" for white, "b" for black)
 	and an upper case character to denote piece type ( P - pawn, R - rook, N - knight, B - bishop, Q - queen, K - king).
 3. Useful commands:
-	A. valid "square" - list positions on the board that the piece on "square" can move to
-						(replace "square" with algebraic notation of piece's position).
-	B. quit or exit - exit the game.
+	valid "square" - list positions on the board that the piece on "square" can move to
+					 (replace "square" with algebraic notation of piece's position).
+	quit or exit - exit the game.
+    show    - show the board
+

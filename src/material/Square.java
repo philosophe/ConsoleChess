@@ -2,6 +2,7 @@ package material;
 
 import java.util.List;
 
+
 public class Square {
 	protected Integer col;
 	protected Integer row;
