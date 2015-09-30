@@ -8,9 +8,6 @@ import org.junit.*;
 
 public class BoardTest {
 	
-	//private Board board;
-	
-	
 	@Test
 	public void testBoard() {
 		Board board = new Board();
@@ -74,7 +71,7 @@ public class BoardTest {
 		attacking = board.getAttacking(Color.BLACK);
 		assertTrue(attacking.isEmpty());
 	}
-
+	
 	@Test
 	public void testIsChecked() {
 		Board board = new Board();
@@ -117,7 +114,54 @@ public class BoardTest {
 	}
 
 	@Test
-	public void testIsValidEnpassant() throws MoveException {
+	public void testIsValidCastle() throws MoveException {
+		Board board = new Board();
+		board.clear();
+		
+		board.addPiece(0, 4, new King(Color.WHITE));
+		board.addPiece(7, 4, new King(Color.BLACK));
+		board.addPiece(0, 0, new Rook(Color.WHITE));
+		board.addPiece(7, 0, new Rook(Color.BLACK));
+		board.addPiece(0, 7, new Rook(Color.WHITE));
+		board.addPiece(7, 7, new Rook(Color.BLACK));
+		
+		Move wc1 = new Move(0, 4, 0, 2);
+		Move wc2 = new Move(0, 4, 0, 6);
+		Move bc1 = new Move(7, 4, 7, 2);
+		Move bc2 = new Move(7, 4, 7, 6);
+		
+		Move[] cMoves = {wc1, wc2, bc1, bc2};
+		for (Move move : cMoves) {
+			assertTrue(board.isValidCastle(move));
+		}
+		
+		Piece rook = new Rook(Color.BLACK);
+		board.addPiece(2, 3, rook);
+		assertFalse(board.isValidCastle(wc1));
+		assertTrue(board.isValidCastle(wc2));
+		
+		board.removePiece(rook);
+		board.addPiece(2, 3, rook);
+		assertFalse(board.isValidCastle(wc1));
+		
+		board.removePiece(rook);
+		board.addPiece(2, 2, rook);
+		assertFalse(board.isValidCastle(wc1));
+		board.removePiece(rook);
+		
+		board.makeMove(new Move(0, 0, 1, 0));
+		board.makeMove(new Move(7, 4, 7, 3));
+		board.makeMove(new Move(1, 0, 0, 0));
+		board.makeMove(new Move(7, 3, 7, 4));
+		board.addPiece(0, 6, new Knight(Color.WHITE));
+		
+		for (Move move : cMoves) {
+			assertFalse(move.toString(), board.isValidCastle(move));
+		}
+	}
+	
+	@Test
+	public void testIsValidEnpassant() throws MoveException, InterruptedException {
 		Board board = new Board();
 		board.clear();
 		

@@ -82,8 +82,7 @@ public class Main {
                     HashSet<Move> moves = board.getAttacking(board.getPerspective());
                     printMoves(moves);
                 } else if (move.contains("attacked")) {
-                    Color color = (board.getPerspective() == Color.WHITE) ? Color.BLACK : Color.WHITE;
-                    HashSet<Move> moves = board.getAttacking(color);
+                    HashSet<Move> moves = board.getAttacked(board.getPerspective());
                     printMoves(moves);
                 } else {
                     doMove(move);

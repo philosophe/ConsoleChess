@@ -24,11 +24,19 @@ public class Move {
     }
 
     public int getRowDiff() {
-        return Math.abs(src.getRow() - dest.getRow());
+        return Math.abs(getSignedRowDiff());
     }
 
     public int getColDiff() {
-        return Math.abs(src.getCol() - dest.getCol());
+        return Math.abs(getSignedColDiff());
+    }
+    
+    public int getSignedRowDiff() {
+        return src.getRow() - dest.getRow();
+    }
+
+    public int getSignedColDiff() {
+        return src.getCol() - dest.getCol();
     }
 
     public boolean isForward() {
