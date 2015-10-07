@@ -1,10 +1,14 @@
 package run;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.Properties;
 
+import AI.AI;
 import material.Board;
 import material.Color;
 import material.Move;
@@ -16,6 +20,9 @@ public class Main {
     private static Board board = new Board();
     private static boolean checkmate = false;
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	private static final String propfile = "config.properties";
+	private static AI ai;
+	private static Color playerColor = Color.WHITE;
 
     private static void printBoard() {
         System.out.println(board.toString());
@@ -63,29 +70,50 @@ public class Main {
         }
     }
     
-    public static void main(String[] args) {
+    private static void setProps() throws FileNotFoundException, IOException {
+    	Properties prop = new Properties();
+    	prop.load(new BufferedReader(new FileReader(propfile)));
+    	String aiStr = prop.getProperty("AI");
+    	if (aiStr != null) {
+			ai = AI.load(aiStr);
+			if (ai != null) {
+				String pCol = prop.getProperty("PlayerColor");
+				if (pCol != null) playerColor = Color.valueOf(pCol.toUpperCase());
+			} else {
+				System.out.println(String.format("Unable to load AI for name %s", aiStr));
+			}
+    	}
+    }
+    
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+    	setProps();
         printBoard();
 		while (!checkmate) {
 			try {
 				System.out.print(String.format("\n%s's Turn: ", board.getPerspective()));
-				String move = br.readLine();
-				if (move.contains("exit") || move.contains("quit")) {
-					System.out.println("Goodbye!");
-					System.exit(0);
-				} else if (move.contains("show")) {
+				if (ai != null && board.getPerspective() != playerColor) {
+					ai.doMove(board);
 					printBoard();
-                } else if (move.contains("valid")) {
-                    MoveParser parser = new MoveParser(move.replaceAll("valid", ""));
-                    HashSet<Move> moves = board.validMoves(parser.getStartSquare());
-                    printMoves(moves);
-				} else if (move.contains("attacking")) {
-                    HashSet<Move> moves = board.getAttacking(board.getPerspective());
-                    printMoves(moves);
-                } else if (move.contains("attacked")) {
-                    HashSet<Move> moves = board.getAttacked(board.getPerspective());
-                    printMoves(moves);
-                } else {
-                    doMove(move);
+				} else {
+					String move = br.readLine();
+					if (move.contains("exit") || move.contains("quit")) {
+						System.out.println("Goodbye!");
+						System.exit(0);
+					} else if (move.contains("show")) {
+						printBoard();
+	                } else if (move.contains("valid")) {
+	                    MoveParser parser = new MoveParser(move.replaceAll("valid", ""));
+	                    HashSet<Move> moves = board.validMoves(parser.getStartSquare());
+	                    printMoves(moves);
+					} else if (move.contains("attacking")) {
+	                    HashSet<Move> moves = board.getAttacking(board.getPerspective());
+	                    printMoves(moves);
+	                } else if (move.contains("attacked")) {
+	                    HashSet<Move> moves = board.getAttacked(board.getPerspective());
+	                    printMoves(moves);
+	                } else {
+	                	doMove(move);
+					}
 				}
 			} catch (MoveException e) {
 				System.out.println(e.getMessage());

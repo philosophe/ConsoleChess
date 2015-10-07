@@ -96,8 +96,18 @@ public class Board {
         return null;
     }
 
-    HashMap<Piece, Square> getPieces() {
+    public HashMap<Piece, Square> getPieces() {
     	return pieces;
+    }
+    
+    public HashSet<Square> getSquares(Color color) {
+    	HashSet<Square> squares = new HashSet<Square>();
+    	for (Piece p : pieces.keySet()) {
+    		if (p.getColor() == color) {
+    			squares.add(pieces.get(p));
+    		}
+    	}
+    	return squares;
     }
     
     private boolean introducesCheck(Move move, Color pers) {

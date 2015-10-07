@@ -26,11 +26,17 @@ public class Square {
         this.col = col;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o instanceof Square) {
             Square other = (Square) o;
             return (row == other.getRow()) && (col == other.getCol());
         }
         return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return row + col;
     }
 }
